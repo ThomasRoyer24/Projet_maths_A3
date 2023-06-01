@@ -89,3 +89,23 @@ def partie_map_sup_5():
 
     fig.update_layout(mapbox=dict(accesstoken=mapbox_token))
     fig.show()
+
+
+def partie3():
+    mapbox_token = 'pk.eyJ1Ijoic2hha3VuOSIsImEiOiJjbGljdWJ1ZjcwbWxiM3NtbzNyYWh1c3kzIn0.A8nMixa9JlGZUyY-YZaABg'
+
+    # Charger les données depuis le fichier CSV
+    data = pd.read_csv("seismes_2014.csv")
+
+    # Créer une carte circulaire des séismes
+    fig = px.scatter_geo(data, lat='lat', lon='lon',
+                        projection='natural earth',
+                        title='Carte circulaire des séismes en fonction de leur magnitude',
+                        color_continuous_scale='rdgy')
+
+    fig.update_geos(showcountries=True, countrycolor="gray")
+    fig.update_layout(geo=dict(showland=True, landcolor="lightgray"))
+
+    fig.update_traces(marker=dict(size=5))
+    fig.update_layout(mapbox=dict(accesstoken=mapbox_token))
+    fig.show()
