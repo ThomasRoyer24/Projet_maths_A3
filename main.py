@@ -1,45 +1,48 @@
 import csv
 import plotly.express as px
 import pandas as pd
+import pylab as plt
+import seaborn as sns
 
 def partie1() :
-    with open(csv_file, 'r') as file:
-        reader = csv.reader(file)
-        next(reader)  # Ignorer l'en-tête du fichier CSV
 
-    for row in reader:
-        line_count += 1
+    data = pd.read_csv("seismes_2014.csv", delimiter=",")
+    data.columns = ["instant", "lat", "lon", "pays", "mag", "profondeur"]
 
-
-
-    # Exemple d'utilisation
-    csv_file = 'data.csv'  # Remplacez 'data.csv' par le chemin vers votre fichier CSV
-    line_count = count_lines(csv_file)
-    print(f"Nombre de lignes dans le fichier CSV : {line_count}")
+    total_seismes = len(data)
+    print("Nombre total de séismes enregistrés en 2014 :", total_seismes)
 
 
-    def count_countries(csv_file):
-        country_counts = {}
+    table_effectifs = data["pays"].value_counts().head(20)
+    print("Table des effectifs des 20 lieux les plus fréquemment secoués dans le monde :")
+    print(table_effectifs)
 
-        with open(csv_file, 'r') as file:
-            reader = csv.reader(file)
-            next(reader)  # Ignorer l'en-tête du fichier CSV
+    noms = table_effectifs.index.tolist()
 
-            for row in reader:
-                country = row[3]  # Indice 3 correspondant à la colonne du pays
-                if country in country_counts:
-                    country_counts[country] += 1
-                else:
-                    country_counts[country] = 1
+    plt.figure(figsize=(10, 6))
+    sns.boxplot(x="pays", y="mag", data=data[data["pays"].isin(noms)], whis=[0,100], order=noms)
+    plt.xticks( rotation=90)
+    plt.xlabel("Lieu")
+    plt.ylabel("Magnitude")
+    plt.title("Boîte à moustaches des 20 lieux les plus fréquemment secoués en 2014")
 
-        return country_counts
 
-    # Exemple d'utilisation
-    csv_file = 'seismes_2014.csv'  # Remplacez 'data.csv' par le chemin vers votre fichier CSV
-    result = count_countries(csv_file)
 
-    for country, count in result.items():
-        print(f"{country}: {count}")
+    top_6_lieux = data.groupby("pays")["mag"].max().nlargest(6)
+    print("Les 6 lieux du monde qui enregistrent les plus fortes magnitudes :")
+    print(top_6_lieux)
+
+    # Nombre de séismes de magnitude inférieure ou égale à 2 en Californie
+    californie_seismes = data[(data["pays"] == "California") & (data["mag"] <= 2)]
+    nombre_seismes_californie = len(californie_seismes)
+    print("Nombre de séismes de magnitude inférieure ou égale à 2 en Californie :", nombre_seismes_californie)
+
+    # Nombre de séismes de magnitude inférieure ou égale à 2 en Alaska
+    alaska_seismes = data[(data["pays"] == "Alaska") & (data["mag"] <= 2)]
+    nombre_seismes_alaska = len(alaska_seismes)
+    print("Nombre de séismes de magnitude inférieure ou égale à 2 en Alaska :", nombre_seismes_alaska)
+
+    plt.show()
 
 def partie_map_inf_5():
     # Définir le token Mapbox
