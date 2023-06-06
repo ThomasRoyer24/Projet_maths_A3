@@ -1,3 +1,5 @@
+#install.packages("threejs")
+
 library(shiny)
 library(threejs)
 tab_color <- c("#8EFFC3","#78FF60","#A9FF47","#F4FF28","#FF900A","#F44900","#EA1B0","#000000")
